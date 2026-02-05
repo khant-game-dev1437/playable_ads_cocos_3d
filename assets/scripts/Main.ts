@@ -12,7 +12,6 @@ export class Main extends Component {
         const size = screen.windowSize;
         console.log(`Screen Resized to: ${size.width}x${size.height}`);
 
-     
         EventManager.instance.emit(EventManager.EVENT_SCREEN_RESIZE, size);
     }
 

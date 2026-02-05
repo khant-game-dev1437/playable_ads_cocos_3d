@@ -22,17 +22,16 @@ export class Menu_UI extends Component {
         this.uiResize();
     }
 
-    // Inside Menu_UI.ts
     uiResize() {
         if (!this.button) return;
 
         const windowSize = screen.windowSize;
-        // Scale the BUTTON, not "this.node" (the parent)
+        
         let finalScale = 1;
         if(windowSize.height > windowSize.width) {
             finalScale = windowSize.width / 720;
         } else {
-            finalScale = windowSize.width / 1920;
+            finalScale = windowSize.width / 1280;
         }
         
 
