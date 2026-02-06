@@ -1,6 +1,7 @@
 import { _decorator, Collider, Component, instantiate, ITriggerEvent, Node, Prefab, Vec3 } from 'cc';
 import { PlayerCarrying } from '../enums/Enums';
 import { GridData } from '../world/GridData';
+import { PoolManager } from '../pool/PoolManager';
 
 const { ccclass, property } = _decorator;
 
@@ -61,10 +62,10 @@ export class PlayerCarry extends Component {
         }
     }
 
-    spawnFromGrid(prefab: Prefab) {
+    spawnFromGrid(prefab: Prefab) { 
         if (this._currentCount > this.limitCount) return;
 
-        let newBox = instantiate(prefab);
+        let newBox = PoolManager.instance.getFromPool(prefab);
         newBox.setParent(this.handTransform);
 
         let stackY = this._currentCount * 0.2;
