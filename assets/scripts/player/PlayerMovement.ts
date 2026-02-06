@@ -1,8 +1,17 @@
-import { _decorator, Component, Vec3, Vec2, RigidBody, input, Input, EventKeyboard, KeyCode, EventTouch, Node, UITransform, view, screen } from 'cc';
+import { _decorator, Component, Vec3, Vec2, RigidBody, input, Input, EventKeyboard, KeyCode, EventTouch, Node, UITransform, view, screen, Quat, math } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('PlayerMovement')
 export class PlayerMovement extends Component {
+
+    @property(Node)
+    public playerCharacter: Node = null;
+
+    @property
+    public rotationSpeed: number = 10;
+
+    private _targetQuat: Quat = new Quat();
+    private _currentQuat: Quat = new Quat();
 
     @property
     public moveSpeed: number = 5;
@@ -133,7 +142,7 @@ export class PlayerMovement extends Component {
         }
     }
 
-    update() {
+    update(deltaTime: number) {
         if (!this._rb) return;
 
         let x = 0;
@@ -157,9 +166,15 @@ export class PlayerMovement extends Component {
         if (x !== 0 || z !== 0) {
             let move = new Vec3(x, 0, z).normalize().multiplyScalar(this.moveSpeed);
             this._rb.setLinearVelocity(new Vec3(move.x, currentVelo.y, move.z));
+
+            let moveDir = new Vec3(-x, 0, -z).normalize();
+            if (this.playerCharacter) {
+                let angleDeg = Math.atan2(moveDir.x, moveDir.z) * (180 / Math.PI);
+                this.playerCharacter.setRotationFromEuler(0, angleDeg, 0);
+            }
         } else {
-            this._rb.setLinearVelocity(new Vec3(0, currentVelo.y, 0));
-            this._rb.setAngularVelocity(new Vec3(0, 0, 0));
+            this._rb.setLinearVelocity(new Vec3(0, currentVelo.y, 0)); // linear - obj pos
+            this._rb.setAngularVelocity(new Vec3(0, 0, 0)); // angular - rotation
         }
     }
 }
