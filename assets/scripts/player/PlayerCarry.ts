@@ -1,4 +1,4 @@
-import { _decorator, Collider, Component, instantiate, ITriggerEvent, Node, Prefab, Vec3 } from 'cc';
+import { _decorator, Collider, Component, instantiate, ITriggerEvent, Node, Prefab, Vec3, tween } from 'cc';
 import { PlayerCarrying } from '../enums/Enums';
 import { GridData } from '../world/GridData';
 import { PoolManager } from '../pool/PoolManager';
@@ -62,14 +62,25 @@ export class PlayerCarry extends Component {
         }
     }
 
-    spawnFromGrid(prefab: Prefab) { 
+    spawnFromGrid(prefab: Prefab) {
         if (this._currentCount > this.limitCount) return;
 
         let newBox = PoolManager.instance.getFromPool(prefab);
         newBox.setParent(this.handTransform);
 
         let stackY = this._currentCount * 0.2;
-        newBox.setPosition(0, stackY, 0);
+
+        newBox.setScale(new Vec3(0, 0, 0)); // for animation
+
+        //newBox.setPosition(0, stackY, 0);
+         newBox.setPosition(0, stackY + 0.2, 0); // slight high abit
+
+        tween(newBox)
+            .to(0.2, {
+                scale: new Vec3(0.5, 0.2, 0.5),
+                position: new Vec3(0, stackY, 0)
+            }, { easing: 'backOut' })
+            .start();
 
         this._currentCount++;
     }
