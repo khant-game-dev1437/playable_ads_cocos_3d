@@ -29,9 +29,9 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
-      "z": 0
+      "x": 3.786,
+      "y": 0.5,
+      "z": -2.855
     },
     "_lrot": {
       "__type__": "cc.Quat",
@@ -42,9 +42,9 @@
     },
     "_lscale": {
       "__type__": "cc.Vec3",
-      "x": 0.5,
-      "y": 0.2,
-      "z": 0.5
+      "x": 1,
+      "y": 1,
+      "z": 1
     },
     "_mobility": 0,
     "_layer": 1073741824,
@@ -58,7 +58,7 @@
   },
   {
     "__type__": "cc.MeshRenderer",
-    "_name": "Cube<ModelComponent>",
+    "_name": "Sphere<ModelComponent>",
     "_objFlags": 0,
     "__editorExtras__": {},
     "node": {
@@ -79,7 +79,7 @@
       "__id__": 4
     },
     "_mesh": {
-      "__uuid__": "1263d74c-8167-4928-91a6-4e2672411f47@a804a",
+      "__uuid__": "1263d74c-8167-4928-91a6-4e2672411f47@17020",
       "__expectedType__": "cc.Mesh"
     },
     "_shadowCastingMode": 0,
@@ -95,7 +95,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "27nKaRPghMC5w4B9YpAyiF"
+    "fileId": "c3Ndra9QBL863sQF/uGz5K"
   },
   {
     "__type__": "cc.ModelBakeSettings",
@@ -125,7 +125,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "c0KaGKn5hE2Ykc5cEQs5CE",
+    "fileId": "e4Oi+5MvxGDaqkAGHrdmAz",
     "instance": null,
     "targetOverrides": null
   }

@@ -1,77 +1,76 @@
 import { _decorator, Collider, Component, instantiate, ITriggerEvent, Node, Prefab, Vec3 } from 'cc';
-import { ObjectTag, TagType } from '../tag/ObjectTag';
+import { PlayerCarrying } from '../enums/Enums';
+import { GridData } from '../world/GridData';
+
 const { ccclass, property } = _decorator;
 
 @ccclass('PlayerCarry')
 export class PlayerCarry extends Component {
 
-    @property(Prefab)
-    public boxPrefabA: Prefab = null; // First box type
-
-    @property(Prefab)
-    public boxPrefabB: Prefab = null; // Second box type
-    
     @property(Node)
     handTransform: Node = null;
 
-    @property
-    public countInterval: number = 0.2; 
+    playerCarriedItem = PlayerCarrying.NOTHING;
 
+    private _activeGrid: GridData | null = null;
+
+    @property
+    public countInterval: number = 0.2;
     private _currentCount: number = 0;
-    private _isInArea: boolean = false;
+    @property
+    public limitCount = 20;
+
     private _timer: number = 0;
 
     start() {
         const collider = this.getComponent(Collider);
-        
-        if(collider) {
-            collider.on('onTriggerStay', this.onTriggerStay, this);
+
+        if (collider) {
+            collider.on('onTriggerEnter', this.onTriggerEnter, this);
             collider.on('onTriggerExit', this.onTriggerExit, this);
         }
     }
 
-    onTriggerStay(event: ITriggerEvent) {
-       
-        const tag = event.otherCollider.getComponent(ObjectTag);
-        
-        if (tag && tag.type === TagType.GRID) {
-            this._isInArea = true;
+    onTriggerEnter(event: ITriggerEvent) {
+        const grid = event.otherCollider.getComponent(GridData);
+        if (!grid) return;
+        this._activeGrid = grid;
+
+        if (this._currentCount === 0) {
+            this.playerCarriedItem = grid.itemType;
         }
     }
 
     onTriggerExit(event: ITriggerEvent) {
-        const tag = event.otherCollider.getComponent(ObjectTag);
-        
-        if (tag && tag.type === TagType.GRID) {
-            this._isInArea = false;
-            this._timer = 0; 
+        const grid = event.otherCollider.getComponent(GridData);
+
+        if (grid === this._activeGrid) {
+            this._activeGrid = null;
+            this._timer = 0; // 
         }
     }
-    
+
     update(deltaTime: number) {
-        if (this._isInArea) {
+        if (this._activeGrid && this.playerCarriedItem === this._activeGrid.itemType) {
             this._timer += deltaTime;
 
             if (this._timer >= this.countInterval) {
-                this._currentCount++;
+                this.spawnFromGrid(this._activeGrid.itemPrefab);
                 this._timer = 0;
-                console.log('counter' + this._currentCount);
-                this.spawnBox();
             }
         }
     }
 
-    spawnBox() {
-        
-        let prefabToSpawn = (this._currentCount % 2 === 0) ? this.boxPrefabA : this.boxPrefabB;
+    spawnFromGrid(prefab: Prefab) {
+        if (this._currentCount > this.limitCount) return;
 
-        if (prefabToSpawn) {
-            let newBox = instantiate(prefabToSpawn);
-           
-            this.handTransform.addChild(newBox);
-            newBox.setPosition(newBox.position.x,newBox.position.y+(this._currentCount*0.2), newBox.position.z);
-        
-        }
+        let newBox = instantiate(prefab);
+        newBox.setParent(this.handTransform);
+
+        let stackY = this._currentCount * 0.2;
+        newBox.setPosition(0, stackY, 0);
+
+        this._currentCount++;
     }
 }
 
