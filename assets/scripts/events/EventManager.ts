@@ -10,6 +10,9 @@ export class EventManager extends Component {
     }
 
     public static readonly EVENT_SCREEN_RESIZE = 'EVENT_SCREEN_RESIZE';
+    
+    // Game
+    public static readonly PLAYER_RECEIVE_ITEM = 'PLAYER_RECEIVE_ITEM';
 }
 
 

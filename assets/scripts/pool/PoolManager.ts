@@ -24,13 +24,12 @@ export class PoolManager extends Component {
         return pool.size() > 0 ? pool.get() : instantiate(prefab);
     }
 
-    public returnToPool(prefab: Prefab, node: Node) {
-        let name = prefab.name;
-        
+    public returnToPool(node: Node) {
+        let name = node.name;
+
         if (this._poolMap.has(name)) {
-            this._poolMap.get(name).put(node); // Automatically unparents and hides
+            this._poolMap.get(name).put(node);
         } else {
-            // if no pool exists, just destroy it
             node.destroy();
         }
     }

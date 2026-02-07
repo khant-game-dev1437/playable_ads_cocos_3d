@@ -12,6 +12,9 @@ export class GridData extends Component {
     @property(Prefab)
     public itemPrefab: Prefab = null;
 
+    @property({ visible(this: GridData) { return this.itemType === PlayerCarrying.DROP_SQUARE || this.itemType === PlayerCarrying.DROP_SPHERE; } }) // can be only seen if drop only
+    public dropLimit: number = 40;
+
     start() {
 
     }
