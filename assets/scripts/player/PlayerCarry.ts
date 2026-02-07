@@ -189,6 +189,6 @@ export class PlayerCarry extends Component {
         hand.count++;
         hand.items.push(newBox);
 
-        EventManager.instance.emit(EventManager.PLAYER_RECEIVE_ITEM);
+        EventManager.instance.emit(EventManager.PLAYER_RECEIVE_ITEM, hand.itemType);
     }
 }
