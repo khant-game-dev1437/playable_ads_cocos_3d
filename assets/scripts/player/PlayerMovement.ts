@@ -1,4 +1,5 @@
 import { _decorator, Component, Vec3, Vec2, RigidBody, input, Input, EventKeyboard, KeyCode, EventTouch, Node, UITransform, view, screen, Quat, math } from 'cc';
+import { PlayerCarry } from './PlayerCarry';
 const { ccclass, property } = _decorator;
 
 @ccclass('PlayerMovement')
@@ -17,6 +18,12 @@ export class PlayerMovement extends Component {
     public moveSpeed: number = 5;
 
     @property
+    public slowSpeed: number = 1;
+
+    @property
+    public slowThreshold: number = 20;
+
+    @property
     public joystickRadius: number = 100;
 
     @property(Node)
@@ -27,6 +34,7 @@ export class PlayerMovement extends Component {
 
     private _keys = {};
     private _rb: RigidBody = null;
+    private _playerCarry: PlayerCarry = null;
 
     // Touch/Joystick
     private _touchStartPos: Vec2 = new Vec2();
@@ -37,6 +45,7 @@ export class PlayerMovement extends Component {
 
     start() {
         this._rb = this.getComponent(RigidBody);
+        this._playerCarry = this.getComponent(PlayerCarry);
 
         // Keyboard input
         input.on(Input.EventType.KEY_DOWN, (e) => this._keys[e.keyCode] = true, this);
@@ -163,8 +172,16 @@ export class PlayerMovement extends Component {
         let currentVelo = new Vec3();
         this._rb.getLinearVelocity(currentVelo);
 
+        this._rb.setAngularVelocity(new Vec3(0, 0, 0));// rotation // bug fix to prevent drift. move or not, just clear angular 
+
         if (x !== 0 || z !== 0) {
-            let move = new Vec3(x, 0, z).normalize().multiplyScalar(this.moveSpeed);
+            let speed;
+            if (this._playerCarry && this._playerCarry.totalCount > this.slowThreshold) {
+                speed = this.slowSpeed
+            } else {
+                speed = this.moveSpeed;
+            }
+            let move = new Vec3(x, 0, z).normalize().multiplyScalar(speed);
             this._rb.setLinearVelocity(new Vec3(move.x, currentVelo.y, move.z));
 
             let moveDir = new Vec3(-x, 0, -z).normalize();
@@ -174,7 +191,7 @@ export class PlayerMovement extends Component {
             }
         } else {
             this._rb.setLinearVelocity(new Vec3(0, currentVelo.y, 0)); // linear - obj pos
-            this._rb.setAngularVelocity(new Vec3(0, 0, 0)); // angular - rotation
+            
         }
     }
 }
