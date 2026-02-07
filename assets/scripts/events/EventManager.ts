@@ -13,6 +13,7 @@ export class EventManager extends Component {
     
     // Game
     public static readonly PLAYER_RECEIVE_ITEM = 'PLAYER_RECEIVE_ITEM';
+    public static readonly GRID_FULL = 'GRID_FULL'; 
 }
 
 

@@ -163,13 +163,19 @@ export class PlayerCarry extends Component {
             .start();
 
         // reduce grid limit blocks
-        if (gridNode.getComponent(GridData).dropLimit) {
-            gridNode.getComponent(GridData).dropLimit--;
+        const gridData = gridNode.getComponent(GridData);
+        if(gridData.dropLimit) {
+            gridData.dropLimit--;
+            if(gridData.dropLimit <= 0) {
+                EventManager.instance.emit(EventManager.GRID_FULL, gridData.itemType); // close arrows in gamemanager
+            }
         }
     }
 
     spawnFromGrid(prefab: Prefab, hand: HandData) {
-        if (hand.count >= this.limitCount) return;
+        if (hand.count >= this.limitCount) {
+            return;
+        }   
 
         let newBox = PoolManager.instance.getFromPool(prefab);
         newBox.setParent(hand.node);
@@ -190,5 +196,6 @@ export class PlayerCarry extends Component {
         hand.items.push(newBox);
 
         EventManager.instance.emit(EventManager.PLAYER_RECEIVE_ITEM, hand.itemType);
+        
     }
 }
