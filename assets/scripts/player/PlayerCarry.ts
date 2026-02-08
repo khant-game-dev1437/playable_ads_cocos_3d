@@ -128,7 +128,7 @@ export class PlayerCarry extends Component {
             this._timer += deltaTime; // pickup
 
             if (this._timer >= this.countInterval) {
-                this.spawnFromGrid(this._activeGrid.itemPrefab, this._activeHand);
+                this.pickupFromGrid(this._activeHand);
                 this._timer = 0;
             }
         } else if (this._isDropping && this._activeHand && this._activeHand.count > 0
@@ -173,28 +173,36 @@ export class PlayerCarry extends Component {
         }
     }
 
-    spawnFromGrid(prefab: Prefab, hand: HandData) {
+    pickupFromGrid(hand: HandData) {
         if (hand.count >= this.limitCount) {
             return;
         }   
 
-        let newBox = PoolManager.instance.getFromPool(prefab);
-        newBox.setParent(hand.node);
+        const nodeParent = this._activeGrid.nodeParent; // player carry .ts
+        if(!nodeParent || nodeParent.children.length === 0) return;
 
-        let stackY = hand.count * 0.2;
+        const block = nodeParent.children[nodeParent.children.length - 1];
+        const startWorldPos = block.worldPosition.clone();
+        block.setParent(hand.node);
+        block.setWorldPosition(startWorldPos); // for curve anim
 
-        newBox.setScale(new Vec3(0, 0, 0));
-        newBox.setPosition(0, stackY + 0.2, 0); // slight high abit for ani
+        // anim
+        const startLocalPos = block.position.clone();
+        const stackY = hand.count * 0.2
+        
+        const midLocal = new Vec3(startLocalPos.x * 0.5, Math.max(startLocalPos.y, stackY) + 2, startLocalPos.z * 0.5)
+        const endLocal = new Vec3(0, stackY, 0);
 
-        tween(newBox)
-            .to(0.2, {
-                scale: new Vec3(0.5, 0.2, 0.5),
-                position: new Vec3(0, stackY, 0)
-            }, { easing: 'backOut' })
+        tween(block)
+            .to(0.1, { position: midLocal }, { easing: 'sineOut' })
+            .to(0.1, {
+                position: endLocal,
+                scale: new Vec3(0.5, 0.2, 0.5)
+            }, { easing: 'sineIn' })
             .start();
 
         hand.count++;
-        hand.items.push(newBox);
+        hand.items.push(block);
 
         EventManager.instance.emit(EventManager.PLAYER_RECEIVE_ITEM, hand.itemType);
         
