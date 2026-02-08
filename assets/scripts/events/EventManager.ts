@@ -15,6 +15,7 @@ export class EventManager extends Component {
     public static readonly PLAYER_RECEIVE_ITEM = 'PLAYER_RECEIVE_ITEM';
     public static readonly GRID_FULL = 'GRID_FULL'; 
     public static readonly GRID_FILLING = 'GRID_FILLING'; 
+    public static readonly GRID_TEXT_INITIAL = 'GRID_TEXT_INITIAL'; 
 }
 
 

@@ -4,8 +4,8 @@ import { PlayerCarrying } from '../enums/Enums';
 import { PlayerCarry } from '../player/PlayerCarry';
 const { ccclass, property } = _decorator;
 
-@ccclass('GameManager')
-export class GameManager extends Component {
+@ccclass('UIManager')
+export class UIManager extends Component {
 
     @property(Node)
     public cubeDownArrow: Node = null;
@@ -35,16 +35,17 @@ export class GameManager extends Component {
         EventManager.instance.on(EventManager.PLAYER_RECEIVE_ITEM, this.showCubeDownArrow, this)
         EventManager.instance.on(EventManager.GRID_FULL, this.turnOffArrows, this)
         EventManager.instance.on(EventManager.GRID_FILLING, this.filling, this)
+        EventManager.instance.on(EventManager.GRID_TEXT_INITIAL, this.showNeedBlocksText, this)
     }
 
     protected onDestroy(): void {
         EventManager.instance.off(EventManager.PLAYER_RECEIVE_ITEM, this.showCubeDownArrow, this)
         EventManager.instance.off(EventManager.GRID_FULL, this.turnOffArrows, this)
         EventManager.instance.off(EventManager.GRID_FILLING, this.filling, this)
+        EventManager.instance.off(EventManager.GRID_TEXT_INITIAL, this.showNeedBlocksText, this)
     }
 
     filling(gridData) {
-        console.log('gridData', gridData.itemType)
         if(gridData.itemType === PlayerCarrying.DROP_SQUARE) {
             this._cubeCount++;
             this._cubeFilledComp.string = `${this._cubeCount}/${gridData.dropLimit + this._cubeCount}`
@@ -53,7 +54,15 @@ export class GameManager extends Component {
             this._sphereFilledComp.string = `${this._sphereCount}/${gridData.dropLimit + this._sphereCount}`
         }
     }
-    
+
+    showNeedBlocksText(gridData) {
+        if(gridData.itemType === PlayerCarrying.DROP_SQUARE) {
+            this._cubeFilledComp.string = `${this._cubeCount}/${gridData.dropLimit}`
+        }else if(gridData.itemType === PlayerCarrying.DROP_SPHERE) {
+            this._sphereFilledComp.string = `${this._sphereCount}/${gridData.dropLimit}`
+        }
+    }
+
     showCubeDownArrow(data) {
         if (data === PlayerCarrying.SQUARE && !this._cubeGridFull) {
             this.cubeDownArrow.active = true;
@@ -70,10 +79,6 @@ export class GameManager extends Component {
             this._sphereGridFull = true;
             this.sphereDownArrow.active = false;
         }
-    }
-
-    update(deltaTime: number) {
-        
     }
 }
 

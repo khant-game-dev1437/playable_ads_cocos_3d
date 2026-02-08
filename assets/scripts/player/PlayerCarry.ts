@@ -148,15 +148,22 @@ export class PlayerCarry extends Component {
     }
 
     dropItem(item: Node, gridNode: Node) {
-        item.setParent(gridNode);
-        item.setWorldPosition(item.worldPosition);
-        item.setScale(0.5, 0.2, 0.5);
+        const startWorldPos = item.worldPosition.clone();
+        const nodeParent = gridNode.getComponent(GridData);
+        if(!nodeParent) return;
+        item.setParent(nodeParent.dropNodeParent);
+        item.setWorldPosition(startWorldPos);
+        const startLocalPos = item.position.clone();
+        const midLocal = new Vec3(startLocalPos.x * 0.5, Math.max(startLocalPos.y, 0) + 2, startLocalPos.z * 0.5)
 
         tween(item)
-            .to(0.3, {
+            .to(0.15, {
+                position: midLocal,
+                scale: new Vec3(0.3, 0.1, 0.3)
+            }, { easing: 'sineOut' })
+            .to(0.15, {
                 position: new Vec3(0, 0, 0),
-                scale: new Vec3(0.5, 0.2, 0.5),
-            }, { easing: 'bounceOut' })
+            }, { easing: 'sineIn' })
             .call(() => {
                 PoolManager.instance.returnToPool(item);
             })
@@ -178,7 +185,7 @@ export class PlayerCarry extends Component {
             return;
         }   
 
-        const nodeParent = this._activeGrid.nodeParent; // player carry .ts
+        const nodeParent = this._activeGrid.pickNodeParent; // player carry .ts
         if(!nodeParent || nodeParent.children.length === 0) return;
 
         const block = nodeParent.children[nodeParent.children.length - 1];
