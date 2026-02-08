@@ -166,6 +166,7 @@ export class PlayerCarry extends Component {
         const gridData = gridNode.getComponent(GridData);
         if(gridData.dropLimit) {
             gridData.dropLimit--;
+            EventManager.instance.emit(EventManager.GRID_FILLING,  gridData); //
             if(gridData.dropLimit <= 0) {
                 EventManager.instance.emit(EventManager.GRID_FULL, gridData.itemType); // close arrows in gamemanager
             }
