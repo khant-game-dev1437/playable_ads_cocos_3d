@@ -1,45 +1,27 @@
-import { _decorator, Component, Node, Vec3, view, screen } from 'cc';
+import { _decorator, Component, screen, view, ResolutionPolicy } from 'cc';
 import { EventManager } from './events/EventManager';
-const { ccclass, property } = _decorator;
+const { ccclass } = _decorator;
 
 @ccclass('Menu_UI')
 export class Menu_UI extends Component {
 
-    @property(Node)
-    public button: Node = null;
-     @property(Node)
-    public button1: Node = null;
-
-    @property(Node)
-    public button2: Node = null;
-     @property(Node)
-    public button3: Node = null;
-    
     start() {
-    
-        EventManager.instance.on(EventManager.EVENT_SCREEN_RESIZE, this.uiResize, this)
-
-        this.uiResize();
+        EventManager.instance.on(EventManager.EVENT_SCREEN_RESIZE, this.updateFitMode, this);
+        this.updateFitMode();
     }
 
-    uiResize() {
-        if (!this.button) return;
+    protected onDestroy() {
+        EventManager.instance.off(EventManager.EVENT_SCREEN_RESIZE, this.updateFitMode, this);
+    }
 
+    updateFitMode() {
         const windowSize = screen.windowSize;
-        
-        let finalScale = 1;
-        if(windowSize.height > windowSize.width) {
-            finalScale = windowSize.width / 720;
+        if (windowSize.height > windowSize.width) {
+            // portrait — fit width
+            view.setDesignResolutionSize(720, 1280, ResolutionPolicy.FIXED_WIDTH);
         } else {
-            finalScale = windowSize.width / 1280;
+            // landscape — fit height
+            view.setDesignResolutionSize(720, 1280, ResolutionPolicy.FIXED_HEIGHT);
         }
-        
-
-        this.button.setScale(finalScale,finalScale);
-        this.button1.setScale(finalScale,finalScale);
-        this.button2.setScale(finalScale,finalScale);
-        this.button3.setScale(finalScale,finalScale);
     }
 }
-
-

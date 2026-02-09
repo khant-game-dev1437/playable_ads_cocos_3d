@@ -60,6 +60,8 @@ export class PlayerMovement extends Component {
         this.hideJoystick();
     }
 
+
+
     // Convert screen touch position to Canvas local position (center origin) must do it, if not the knob position doesnt appear on finger 
     private screenToCanvasPos(screenPos: Vec2): Vec2 {
         const visibleSize = view.getVisibleSize();
@@ -70,6 +72,9 @@ export class PlayerMovement extends Component {
     }
 
     onDestroy() {
+        input.off(Input.EventType.KEY_DOWN, (e) => this._keys[e.keyCode] = true, this);
+        input.off(Input.EventType.KEY_UP, (e) => this._keys[e.keyCode] = false, this);
+
         input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
         input.off(Input.EventType.TOUCH_MOVE, this.onTouchMove, this);
         input.off(Input.EventType.TOUCH_END, this.onTouchEnd, this);

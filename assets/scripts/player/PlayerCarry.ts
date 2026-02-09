@@ -162,7 +162,7 @@ export class PlayerCarry extends Component {
                 scale: new Vec3(0.3, 0.1, 0.3)
             }, { easing: 'sineOut' })
             .to(0.15, {
-                position: new Vec3(0, 0, 0),
+                position: new Vec3(0, 0, 0), // end pos
             }, { easing: 'sineIn' })
             .call(() => {
                 PoolManager.instance.returnToPool(item);

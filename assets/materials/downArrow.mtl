@@ -18,7 +18,9 @@
   ],
   "_states": [
     {
-      "rasterizerState": {},
+      "rasterizerState": {
+        "cullMode": 0
+      },
       "depthStencilState": {},
       "blendState": {
         "targets": [
@@ -27,7 +29,9 @@
       }
     },
     {
-      "rasterizerState": {},
+      "rasterizerState": {
+        "cullMode": 0
+      },
       "depthStencilState": {},
       "blendState": {
         "targets": [
@@ -36,7 +40,9 @@
       }
     },
     {
-      "rasterizerState": {},
+      "rasterizerState": {
+        "cullMode": 0
+      },
       "depthStencilState": {},
       "blendState": {
         "targets": [
@@ -50,6 +56,19 @@
       "mainTexture": {
         "__uuid__": "8c804f2b-7054-489d-b0b5-f937d357f8ed@6c48a",
         "__expectedType__": "cc.Texture2D"
+      },
+      "mainColor": {
+        "__type__": "cc.Color",
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "colorScale": {
+        "__type__": "cc.Vec3",
+        "x": 1.1,
+        "y": 1,
+        "z": 1
       }
     },
     {},
