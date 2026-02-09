@@ -1,4 +1,5 @@
-import { _decorator, Component, Label, Node } from 'cc';
+import { _decorator, Component, Label, Node, Vec3, tween } from 'cc';
+import { PoolManager } from '../pool/PoolManager';
 import { EventManager } from '../events/EventManager';
 import { PlayerCarrying } from '../enums/Enums';
 import { PlayerCarry } from '../player/PlayerCarry';
@@ -19,6 +20,14 @@ export class UIManager extends Component {
     @property(Node)
     public sphereFilled: Node = null;
 
+    @property(Label)
+    public moneyString: Label = null;
+
+    @property(Node)
+    public moneyReachNode: Node = null;
+
+    public moneyValue: number = null;
+    
     private _cubeFilledComp;
     private _sphereFilledComp;
 
@@ -36,6 +45,7 @@ export class UIManager extends Component {
         EventManager.instance.on(EventManager.GRID_FULL, this.turnOffArrows, this)
         EventManager.instance.on(EventManager.GRID_FILLING, this.filling, this)
         EventManager.instance.on(EventManager.GRID_TEXT_INITIAL, this.showNeedBlocksText, this)
+        EventManager.instance.on(EventManager.MONEY_COLLECTED, this.onMoneyCollected, this)
     }
 
     protected onDestroy(): void {
@@ -43,6 +53,7 @@ export class UIManager extends Component {
         EventManager.instance.off(EventManager.GRID_FULL, this.turnOffArrows, this)
         EventManager.instance.off(EventManager.GRID_FILLING, this.filling, this)
         EventManager.instance.off(EventManager.GRID_TEXT_INITIAL, this.showNeedBlocksText, this)
+        EventManager.instance.off(EventManager.MONEY_COLLECTED, this.onMoneyCollected, this)
     }
 
     filling(gridData) {
@@ -69,6 +80,11 @@ export class UIManager extends Component {
         } else if (data === PlayerCarrying.SPHERE && !this._sphereGridFull) {
             this.sphereDownArrow.active = true;
         }
+    }
+
+    onMoneyCollected(value: number) {
+         this.moneyValue += value;
+        this.moneyString.string = this.moneyValue.toString();
     }
 
     turnOffArrows(data) {

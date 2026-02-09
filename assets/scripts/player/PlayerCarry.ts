@@ -175,6 +175,7 @@ export class PlayerCarry extends Component {
             gridData.dropLimit--;
             EventManager.instance.emit(EventManager.GRID_FILLING,  gridData); //
             if(gridData.dropLimit <= 0) {
+                gridData.gridFull();
                 EventManager.instance.emit(EventManager.GRID_FULL, gridData.itemType); // close arrows in gamemanager
             }
         }
@@ -185,10 +186,14 @@ export class PlayerCarry extends Component {
             return;
         }   
 
-        const nodeParent = this._activeGrid.pickNodeParent; // player carry .ts
+        const nodeParent = this._activeGrid.itemType === PlayerCarrying.MONEY
+            ? this._activeGrid.moneyPickupPoint
+            : this._activeGrid.pickNodeParent;  // need to check because money pickUp point is in money grid, not pick Node parent
+
         if(!nodeParent || nodeParent.children.length === 0) return;
 
         const block = nodeParent.children[nodeParent.children.length - 1];
+
         const startWorldPos = block.worldPosition.clone();
         block.setParent(hand.node);
         block.setWorldPosition(startWorldPos); // for curve anim
@@ -210,8 +215,12 @@ export class PlayerCarry extends Component {
 
         hand.count++;
         hand.items.push(block);
-
+        
+        if(this._activeGrid.itemType === PlayerCarrying.MONEY) {
+            EventManager.instance.emit(EventManager.MONEY_COLLECTED, this._activeGrid.rewardValue)
+        }
         EventManager.instance.emit(EventManager.PLAYER_RECEIVE_ITEM, hand.itemType);
+
         
     }
 }

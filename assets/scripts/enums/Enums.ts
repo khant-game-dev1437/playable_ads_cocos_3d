@@ -5,6 +5,7 @@ export enum PlayerCarrying {
     SPHERE,
     DROP_SQUARE,
     DROP_SPHERE,
+    MONEY,
     NOTHING
 }
 
