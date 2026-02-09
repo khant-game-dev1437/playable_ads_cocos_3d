@@ -115,6 +115,9 @@ export class PlayerCarry extends Component {
         if (!grid) return;
 
         if (grid === this._activeGrid) {
+            if (this._activeHand && this._activeHand.count <= 0) {
+                this._activeHand.itemType = PlayerCarrying.NOTHING;
+            }
             this._isDropping = false;
             this._activeGrid = null;
             this._activeHand = null;
