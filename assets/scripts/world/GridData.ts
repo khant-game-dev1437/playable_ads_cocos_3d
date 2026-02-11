@@ -64,7 +64,7 @@ export class GridData extends Component {
     update(deltaTime: number) {
         if (!this._shouldSpawn) return;
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 20; i++) {
             if (this._spawnIndex >= this.blocksAvaliable) {
                 this._shouldSpawn = false;
                 break;
@@ -76,18 +76,19 @@ export class GridData extends Component {
 
     spawnBlock(index: number) {
         let newBlock = PoolManager.instance.getFromPool(this.pickupPrefab);
-        this.pickNodeParent.addChild(newBlock);
 
-        let row = index % 3;
-        let col = Math.floor(index / 3) % 3;
-        let layer = Math.floor(index / 9);
 
-        let x = (row - 1) * this._pickupSpacing;
-        let z = (col - 1) * this._pickupSpacing;
-        let y = layer * this._heightStep;
+        const spreadRange = 10;
+        let x = (Math.random() - 0.5) * spreadRange * 2;
+        let z = (Math.random() - 0.5) * spreadRange * 2;
 
-        newBlock.setScale(0.3, 0.1, 0.3);
-        newBlock.setPosition(x, y, z);
+        newBlock.setPosition(x, 0, z);
+        newBlock.setScale(0, 0, 0);
+
+        this.pickNodeParent.addChild(newBlock); // set pos first, then add child for short loading time
+        tween(newBlock)
+            .to(0.2, { scale: new Vec3(0.3, 0.1, 0.3) }, { easing: 'backOut' })
+            .start();
     }
 
     gridFull() {
