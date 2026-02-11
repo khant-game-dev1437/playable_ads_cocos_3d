@@ -2825,7 +2825,7 @@
       "__uuid__": "73a3b080-fc4c-48ab-bc84-716735d3f8c9",
       "__expectedType__": "cc.Prefab"
     },
-    "blocksAvaliable": 10000,
+    "blocksAvaliable": 40,
     "pickNodeParent": {
       "__id__": 81
     },
@@ -5006,7 +5006,7 @@
       "__id__": 40
     },
     "_children": [],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 144
@@ -5018,9 +5018,9 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 77.72199829101562,
-      "y": -75.41200213623047,
-      "z": 16.67599952697754
+      "x": 77.677,
+      "y": -75.159,
+      "z": 18.582
     },
     "_lrot": {
       "__type__": "cc.Quat",
@@ -5132,7 +5132,7 @@
       "__id__": 40
     },
     "_children": [],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 148

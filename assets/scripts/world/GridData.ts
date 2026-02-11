@@ -64,7 +64,7 @@ export class GridData extends Component {
     update(deltaTime: number) {
         if (!this._shouldSpawn) return;
 
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 10; i++) {
             if (this._spawnIndex >= this.blocksAvaliable) {
                 this._shouldSpawn = false;
                 break;

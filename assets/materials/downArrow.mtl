@@ -29,10 +29,10 @@
       }
     },
     {
-      "rasterizerState": {
-        "cullMode": 0
+      "rasterizerState": {},
+      "depthStencilState": {
+        "depthWrite": true
       },
-      "depthStencilState": {},
       "blendState": {
         "targets": [
           {}
@@ -40,10 +40,10 @@
       }
     },
     {
-      "rasterizerState": {
-        "cullMode": 0
+      "rasterizerState": {},
+      "depthStencilState": {
+        "depthWrite": true
       },
-      "depthStencilState": {},
       "blendState": {
         "targets": [
           {}
