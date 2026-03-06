@@ -77,15 +77,17 @@ export class GridData extends Component {
     spawnBlock(index: number) {
         let newBlock = PoolManager.instance.getFromPool(this.pickupPrefab);
 
+        const cols = 3;
+        const row = Math.floor(index / cols) % cols;
+        const col = index % cols;
+        const layer = Math.floor(index / 9);
+        const x = (col - 1) * this._pickupSpacing;
+        const z = (row - 1) * this._pickupSpacing;
 
-        const spreadRange = 10;
-        let x = (Math.random() - 0.5) * spreadRange * 2;
-        let z = (Math.random() - 0.5) * spreadRange * 2;
-
-        newBlock.setPosition(x, 0, z);
+        newBlock.setPosition(x, layer * this._heightStep, z);
         newBlock.setScale(0, 0, 0);
 
-        this.pickNodeParent.addChild(newBlock); // set pos first, then add child for short loading time
+        this.pickNodeParent.addChild(newBlock);
         tween(newBlock)
             .to(0.2, { scale: new Vec3(0.3, 0.1, 0.3) }, { easing: 'backOut' })
             .start();

@@ -1,4 +1,4 @@
-import { _decorator, Component, Vec3, Vec2, RigidBody, input, Input, EventKeyboard, KeyCode, EventTouch, Node, UITransform, view, screen, Quat, math } from 'cc';
+import { _decorator, Component, Vec3, Vec2, RigidBody, input, Input, EventKeyboard, KeyCode, EventTouch, Node, UITransform, view, screen, Quat, math, AnimationClip, SkeletalAnimation } from 'cc';
 import { PlayerCarry } from './PlayerCarry';
 const { ccclass, property } = _decorator;
 
@@ -8,11 +8,19 @@ export class PlayerMovement extends Component {
     @property(Node)
     public playerCharacter: Node = null;
 
+    @property(AnimationClip)
+    public runningClip: AnimationClip = null;
+
+    @property(AnimationClip)
+    public idleClip: AnimationClip = null;
+
     @property
     public rotationSpeed: number = 10;
 
-    private _targetQuat: Quat = new Quat();
-    private _currentQuat: Quat = new Quat();
+    private _skelAnim: SkeletalAnimation = null;
+    private _isRunning: boolean = false;
+    private _rootBone: Node = null;
+    private _rootBoneRestPos: Vec3 = new Vec3();
 
     @property
     public moveSpeed: number = 5;
@@ -46,6 +54,27 @@ export class PlayerMovement extends Component {
     start() {
         this._rb = this.getComponent(RigidBody);
         this._playerCarry = this.getComponent(PlayerCarry);
+
+        if (this.playerCharacter) {
+            this._skelAnim = this.playerCharacter.getComponent(SkeletalAnimation);
+            if (this._skelAnim) {
+                this._skelAnim.useBakedAnimation = false;
+                if (this.runningClip) this.runningClip.name = 'running';
+                if (this.idleClip) this.idleClip.name = 'idle';
+                const clips = [];
+                if (this.runningClip) clips.push(this.runningClip);
+                if (this.idleClip) clips.push(this.idleClip);
+                this._skelAnim.clips = clips;
+                this._skelAnim.defaultClip = this.idleClip || this.runningClip;
+                if (this.idleClip) this._skelAnim.play('idle');
+            }
+            // Find the root bone (Mixamo uses "mixamorig:Hips") and save its rest position
+            this._rootBone = this.playerCharacter.getChildByName('RootNode')?.getChildByName('mixamorig:Hips')
+                || this.playerCharacter.getChildByName('mixamorig:Hips');
+            if (this._rootBone) {
+                this._rootBoneRestPos.set(this._rootBone.position);
+            }
+        }
 
         // Keyboard input
         input.on(Input.EventType.KEY_DOWN, (e) => this._keys[e.keyCode] = true, this);
@@ -189,14 +218,35 @@ export class PlayerMovement extends Component {
             let move = new Vec3(x, 0, z).normalize().multiplyScalar(speed);
             this._rb.setLinearVelocity(new Vec3(move.x, currentVelo.y, move.z));
 
-            let moveDir = new Vec3(-x, 0, -z).normalize();
+            let moveDir = new Vec3(x, 0, z).normalize();
             if (this.playerCharacter) {
-                let angleDeg = Math.atan2(moveDir.x, moveDir.z) * (180 / Math.PI);
+                let angleDeg = Math.atan2(moveDir.x, moveDir.z) * (180 / Math.PI) + 45;
                 this.playerCharacter.setRotationFromEuler(0, angleDeg, 0);
+            }
+
+            if (!this._isRunning && this._skelAnim) {
+                this._skelAnim.play('running');
+                this._isRunning = true;
             }
         } else {
             this._rb.setLinearVelocity(new Vec3(0, currentVelo.y, 0)); // linear - obj pos
-            
+
+            if (this._isRunning && this._skelAnim) {
+                if (this.idleClip) {
+                    this._skelAnim.play('idle');
+                } else {
+                    this._skelAnim.stop();
+                }
+                this._isRunning = false;
+            }
+        }
+    }
+
+    lateUpdate() {
+        // Lock root bone XZ to cancel root motion, keep Y for natural bounce
+        if (this._rootBone) {
+            const pos = this._rootBone.position;
+            this._rootBone.setPosition(this._rootBoneRestPos.x, pos.y, this._rootBoneRestPos.z);
         }
     }
 }
